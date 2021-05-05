@@ -48,7 +48,7 @@
     <title>Shape Generator</title>
   </head>
   <body>
-    <h1><a href='index.html'>Shape Generator</a></h1>
+    <h1><a href='index.html'>Shape Generator</a><span id='counters'></span></h1>
     <h2>Todos</h2>
     <ul>
       <li>Create a repo named shape-generator and add this index.html page</li>
@@ -68,7 +68,7 @@
     </ul>
     <a href='https://github.com/FullstackAcademy/shape-generator'>Repo</a>
     <form>
-      <input name='px' value='25'/>
+      <input type='number' name='px' value='25' min='25' max='250'/>
     </form>
     <div id='container'>
     </div>
@@ -77,11 +77,24 @@
       const input = form.querySelector('input');
       const link = document.querySelector('a');
       const container = document.querySelector('#container');
+      const counters = document.querySelector('#counters');
+
+      let shapeCounter = 3;
+      let sumOfSizes = 0;
+      const avgSize = () => Math.round(sumOfSizes/shapeCounter);
 
       container.addEventListener('click', (ev)=>{
-        if(!ev.target.id){
+        if(!ev.target.id) {
+          if (ev.target.parentNode === container) {
           ev.target.parentNode.removeChild(ev.target);
-        }
+          sumOfSizes -= Number(ev.target.firstChild.innerHTML);
+          } else {
+          container.removeChild(ev.target.parentNode);
+          sumOfSizes -= Number(ev.target.innerHTML);
+          };
+          shapeCounter --;
+          counters.innerHTML = ` Number: ${shapeCounter}, Average Size: ${avgSize()}`;
+        };
       });
 
       const generateCircle = ()=> {
@@ -89,11 +102,16 @@
         const circle = document.createElement('div');
         circle.style.width = size;
         circle.style.height = size;
+        const shapeChancer = Math.random();
+        if (shapeChancer < 0.5) {
+          circle.style.borderRadius = 0;
+        };
         container.appendChild(circle);
         const span = document.createElement('span');
         span.innerText = input.value;
+        sumOfSizes += Number(input.value);
         circle.appendChild(span);
-        input.value = 25 + Math.floor(Math.random()*50);
+        input.value = 25 + Math.floor(Math.random()*225);
         window.setTimeout(function(){
           circle.classList.add('blue');
         }, 500);
@@ -102,11 +120,14 @@
       form.addEventListener('submit', (ev)=> {
         ev.preventDefault();
         generateCircle();
+        shapeCounter ++;
+        counters.innerHTML = ` Number: ${shapeCounter}, Average Size: ${avgSize()}`;
       });
 
       generateCircle();
       generateCircle();
       generateCircle();
+      counters.innerHTML = ` Number: ${shapeCounter}, Average Size: ${avgSize()}`
 
     </script>
   </body>
